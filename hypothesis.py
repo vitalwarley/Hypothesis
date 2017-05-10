@@ -145,7 +145,6 @@ class Hypothesis:
         return r
 
     def create_annotation_with_custom_payload(self, payload=None):
-        payload = json.loads(payload)
         r = self.post_annotation(payload)
         return r
 
