@@ -34,16 +34,8 @@ class Hypothesis:
                 }
         else: self.permissions = {}
 
-    def search(self, params={}):
-        """ Call search API with no pagination, return rows """
-        params['limit'] = self.single_page_limit
-        h_url = self.query_url.format(query=urlencode(params))
-        print ( h_url )
-        json = requests.get(h_url).json()['rows']
-        return json
- 
     def search_all(self, params={}):
-        """Call search API with pagination, return rows """
+        """Call search API with pagination, return row iterator """
         params['offset'] = 0
         params['limit'] = self.single_page_limit
         while True:
