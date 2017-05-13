@@ -60,7 +60,7 @@ class Hypothesis:
             if self.debug:
                 print ( h_url )
             if self.token is not None:
-                r = self.token_authenticated_query(h_url)
+                r = self.token_authenticated_get(h_url)
                 obj = r
             else:
                 r = requests.get(h_url)
@@ -81,7 +81,7 @@ class Hypothesis:
             for row in rows:
                 yield row
 
-    def token_authenticated_query(self, url=None):
+    def token_authenticated_get(self, url=None):
         try:
            headers = {'Authorization': 'Bearer ' + self.token, 'Content-Type': 'application/json;charset=utf-8' }
            r = requests.get(url, headers=headers)
@@ -92,7 +92,7 @@ class Hypothesis:
     def get_annotation(self, id=None):
         h_url = '%s/annotations/%s' % ( self.api_url, id )
         if self.token is not None:
-            obj = self.token_authenticated_query(h_url)
+            obj = self.token_authenticated_get(h_url)
         else:
             obj = requests.get(h_url)
         return obj
