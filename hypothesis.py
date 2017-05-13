@@ -10,11 +10,28 @@ except:
     from urllib.parse import urlencode
 
 class Hypothesis:
-    def __init__(self, username=None, token=None, group=None, limit=None, max_results=None, domain=None, host=None, port=None):
+    def __init__(self, 
+                 domain=None, 
+                 authority=None, 
+                 username=None, 
+                 token=None, 
+                 group=None, 
+                 limit=None, 
+                 max_results=None, 
+                 host=None, 
+                 port=None,
+                 debug=False):
+
         if domain is None:
             self.domain = 'hypothes.is'
         else:
             self.domain = domain
+
+        if authority is None:
+            self.authority = '@hypothes.is'
+        else:
+            self.domain = domain
+
         self.app_url = 'https://%s/app' % self.domain
         self.api_url = 'https://%s/api' % self.domain
         self.query_url = 'https://%s/api/search?{query}' % self.domain
@@ -28,9 +45,9 @@ class Hypothesis:
         if self.username is not None:
             self.permissions = {
                 "read": ['group:' + self.group],
-                "update": ['acct:' + self.username + '@hypothes.is'],
-                "delete": ['acct:' + self.username + '@hypothes.is'],
-                "admin":  ['acct:' + self.username + '@hypothes.is']
+                "update": ['acct:' + self.username + self.authority],
+                "delete": ['acct:' + self.username + self.authority],
+                "admin":  ['acct:' + self.username + self.authority]
                 }
         else: self.permissions = {}
 
@@ -40,7 +57,8 @@ class Hypothesis:
         params['limit'] = self.single_page_limit
         while True:
             h_url = self.query_url.format(query=urlencode(params, True))
-            print ( h_url )
+            if self.debug:
+                print ( h_url )
             if self.token is not None:
                 r = self.token_authenticated_query(h_url)
                 obj = r
@@ -49,7 +67,8 @@ class Hypothesis:
                 obj = r.json()
             rows = obj['rows']
             row_count = len(rows)
-            print ( "%s rows" % row_count )
+            if self.debug:
+                print ( "%s rows" % row_count )
             if 'replies' in obj:
                rows += obj['replies']
             row_count = len(rows)
@@ -107,7 +126,7 @@ class HypothesisAnnotation:
         self.group = row['group']
         self.updated = row['updated'][0:19]
         self.permissions = row['permissions']
-        self.user = row['user'].replace('acct:','').replace('@hypothes.is','')
+        self.user = row['user'].replace('acct:','').replace(self.authority,'')
         self.is_group = self.group not in [None, '__world__', 'NoGroup']
         self.is_world_private = not self.is_group and 'group:__world__' not in self.permissions['read']
         self.is_group_private = self.is_group and 'group:'+self.group not in self.permissions['read']
