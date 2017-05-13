@@ -35,6 +35,6 @@ payload = {
      }
 }
 
-r = h.create_annotation_with_custom_payload(payload)
+r = h.post_annotation(payload)
 print r.status_code
 ```

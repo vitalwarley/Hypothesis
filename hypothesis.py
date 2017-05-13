@@ -70,34 +70,6 @@ class Hypothesis:
         except:
             print ( traceback.print_exc() )
 
-    def make_annotation_payload_with_target(self, url, start_pos, end_pos, prefix, exact, suffix, text, tags, link):
-        """Create JSON payload for API call."""
-        payload = {
-            "uri": url,
-            "user": 'acct:' + self.username + '@' + self.domain,
-            "permissions": self.permissions,
-            "group": self.group,
-            "target": 
-            [{
-                "scope": [url],
-                "selector": 
-                    [{
-                        "start": start_pos,
-                        "end": end_pos,
-                        "type": "TextPositionSelector"
-                        }, 
-                        {
-                        "type": "TextQuoteSelector", 
-                        "prefix": prefix,
-                        "exact": exact,
-                        "suffix": suffix
-                        },]
-                }], 
-            "tags": tags,
-            "text": text
-        }
-        return payload
-
     def get_annotation(self, id=None):
         h_url = '%s/annotations/%s' % ( self.api_url, id )
         if self.token is not None:
@@ -105,48 +77,6 @@ class Hypothesis:
         else:
             obj = requests.get(h_url)
         return obj
-
-    def create_annotation_with_target(self, url=None, start_pos=None, end_pos=None, prefix=None, 
-                   exact=None, suffix=None, text=None, tags=None, link=None):
-            """Call API with token and payload, create annotation"""
-            payload = self.make_annotation_payload_with_target(url, start_pos, end_pos, prefix, exact, suffix, text, tags, link)
-            r = self.post_annotation(payload)
-            return r
-
-    def make_annotation_payload_with_target_using_only_text_quote(self, url, prefix, exact, suffix, text, tags):
-        """Create JSON payload for API call."""
-        payload = {
-            "uri": url,
-            "user": 'acct:' + self.username + '@hypothes.is',
-            "permissions": self.
-            permissions,
-            "group": self.group,
-            "target": 
-            [{
-                "scope": [url],
-                "selector": 
-                    [{
-                        "type": "TextQuoteSelector", 
-                        "prefix": prefix,
-                        "exact": exact,
-                        "suffix": suffix
-                        },]
-                }], 
-            "tags": tags,
-            "text": text
-        }
-        return payload
-
-    def create_annotation_with_target_using_only_text_quote(self, url=None, prefix=None, 
-               exact=None, suffix=None, text=None, tags=None):
-        """Call API with token and payload, create annotation (using only text quote)"""
-        payload = self.make_annotation_payload_with_target_using_only_text_quote(url, prefix, exact, suffix, text, tags)
-        r = self.post_annotation(payload)
-        return r
-
-    def create_annotation_with_custom_payload(self, payload=None):
-        r = self.post_annotation(payload)
-        return r
 
     def post_annotation(self, payload):
         try:
