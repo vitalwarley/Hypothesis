@@ -99,35 +99,6 @@ class Hypothesis:
        r = requests.delete(self.api_url + '/annotations/' + id, headers=headers)
        return r 
 
-@classmethod
-def transfer(url=None, from_group=None, to_group=None, username=None, token=None):
-    h1 = Hypothesis(username=username, token=token, group=from_group)
-    h2 = Hypothesis(username=username, token=token, group=to_group)
-    h1_params = { 'uri' : url,
-                  'group' : from_group
-              }
-    rows = h1.search_all(h1_params)
-    for row in list(rows):
-        try:
-            if 'references' in row:
-                continue
-            row['user'] = 'acct:' + username + '@hypothes.is'
-            row['group'] = h2.group
-            permissions = h2.permissions
-            permission_fields = ['admin','update','delete']
-            for field in permission_fields:
-                permissions[field][0] = 'acct:' + username + '@hypothes.is'
-            row['permissions'] = permissions
-            del row['created']
-            del row['updated']
-            del row['id']
-            del row['links']
-            r = h2.post_annotation(row)
-            print (r.status_code)
-        except:
-            print (traceback.print_exc())      
-
-
 class HypothesisAnnotation:
     """Encapsulate one row of a Hypothesis API search."""   
     def __init__(self, row):
