@@ -30,7 +30,7 @@ class Hypothesis:
         if authority is None:
             self.authority = '@hypothes.is'
         else:
-            self.domain = domain
+            self.authority = authority
 
         self.app_url = 'https://%s/app' % self.domain
         self.api_url = 'https://%s/api' % self.domain
@@ -45,9 +45,9 @@ class Hypothesis:
         if self.username is not None:
             self.permissions = {
                 "read": ['group:' + self.group],
-                "update": ['acct:' + self.username + self.authority],
-                "delete": ['acct:' + self.username + self.authority],
-                "admin":  ['acct:' + self.username + self.authority]
+                "update": ['acct:' + self.username + '@' + self.authority],
+                "delete": ['acct:' + self.username + '@' + self.authority],
+                "admin":  ['acct:' + self.username + '@' + self.authority]
                 }
         else: self.permissions = {}
 
