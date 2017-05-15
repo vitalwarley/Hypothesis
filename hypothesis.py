@@ -28,7 +28,7 @@ class Hypothesis:
             self.domain = domain
 
         if authority is None:
-            self.authority = '@hypothes.is'
+            self.authority = 'hypothes.is'
         else:
             self.authority = authority
 
