@@ -4,7 +4,7 @@ yet another python wrapper for the hypothes.is api
 ## Create an annotation using a TextQuoteSelector
 
 ```
-h = hypothesis.Hypothesis(token='TOKEN')  # your api token from https://hypothes.is/account/developer
+h = hypothesis.Hypothesis(username=USER, token=TOKEN)  # your h username and api token (from https://hypothes.is/account/developer)
 
 url = 'url of web page to annotate'
 exact = 'selected text (i.e. the quote)'
@@ -32,8 +32,10 @@ payload = {
     "text": text,
      "document": {
          "title": [title]
-     }
-}
+     },
+     "permissions": h.permissions,
+     "group": h.group
+  }
 
 r = h.post_annotation(payload)
 print r.status_code
