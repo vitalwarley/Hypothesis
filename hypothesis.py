@@ -1,6 +1,7 @@
 ﻿import json
 import re
 import requests
+from requests.adapters import HTTPAdapter
 import time
 import traceback
 
@@ -17,7 +18,7 @@ class Hypothesis:
                  token=None, 
                  group=None, 
                  limit=None, 
-                 max_results=None, 
+                 max_search_results=None, 
                  host=None, 
                  port=None,
                  debug=False):
@@ -40,7 +41,7 @@ class Hypothesis:
         self.token = token
         self.username = username
         self.single_page_limit = 200 if limit is None else limit  # per-page, the api honors limit= up to (currently) 200
-        self.multi_page_limit = 200 if max_results is None else max_results  # limit for paginated results
+        self.max_search_results = 2000 if max_search_results is None else max_search_results  # limit for paginated results
         self.group = group if group is not None else '__world__'
         if self.username is not None:
             self.permissions = {
@@ -51,9 +52,15 @@ class Hypothesis:
                 }
         else: self.permissions = {}
 
+        self.session = requests.Session()
+        self.session.mount(self.api_url, HTTPAdapter(max_retries=3))
+
+        self.debug = True
+
     def search_all(self, params={}):
         """Call search API with pagination, return row iterator """
-        params['offset'] = 0
+        if not 'offset' in params:
+            params['offset'] = 0
         params['limit'] = self.single_page_limit
         while True:
             h_url = self.query_url.format(query=urlencode(params, True))
@@ -63,7 +70,7 @@ class Hypothesis:
                 r = self.token_authenticated_get(h_url)
                 obj = r
             else:
-                r = requests.get(h_url)
+                r = self.session.get(h_url)
                 obj = r.json()
             rows = obj['rows']
             row_count = len(rows)
@@ -74,7 +81,7 @@ class Hypothesis:
             row_count = len(rows)
             print ( "%s rows+replies" % row_count )
             params['offset'] += row_count
-            if params['offset'] > self.multi_page_limit:
+            if params['offset'] > self.max_search_results:
                 break
             if len(rows) is 0:
                 break
