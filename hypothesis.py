@@ -55,7 +55,7 @@ class Hypothesis:
         self.session = requests.Session()
         self.session.mount(self.api_url, HTTPAdapter(max_retries=3))
 
-        self.debug = True
+        self.debug = debug
 
     def search_all(self, params={}):
         """Call search API with pagination, return row iterator """
@@ -79,7 +79,8 @@ class Hypothesis:
             if 'replies' in obj:
                rows += obj['replies']
             row_count = len(rows)
-            print ( "%s rows+replies" % row_count )
+            if self.debug:
+               print ( "%s rows+replies" % row_count )
             params['offset'] += row_count
             if params['offset'] > self.max_search_results:
                 break
