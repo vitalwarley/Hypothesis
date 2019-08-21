@@ -163,5 +163,12 @@ class Test(unittest.TestCase):
         time.sleep(1)
         with self.assertRaises(Exception):
             self.h.get_annotation(id)
+
+    def test_07_post_invalid_payload_raises_exception(self):
+        payload = self.payload
+        del payload["uri"]
+        r = self.h.post_annotation(payload)
+        assert "'uri' is a required property" in r.text
+
 if __name__ == "__main__":
     unittest.main()
