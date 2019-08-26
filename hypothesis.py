@@ -81,8 +81,9 @@ class Hypothesis:
             )
 
         limit = 200 if "limit" not in params else params["limit"]  # FIXME hardcoded
-        max_results = params["max_results"]
-        if max_results is None:
+        if "max_results" in params:
+            max_results = params["max_results"]
+        else:
             max_results = self.max_search_results
         if max_results < limit:
             params["limit"] = max_results
@@ -144,7 +145,7 @@ class Hypothesis:
         if r.ok:
             return obj
         else:
-            raise Exception(f"{r.reason} {obj}")
+            raise Exception( "reason %s data %s" % (r.reason, obj) )
 
     def get_annotation(self, id=None):
         h_url = "%s/annotations/%s" % (self.api_url, id)
