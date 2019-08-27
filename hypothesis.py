@@ -137,9 +137,10 @@ class Hypothesis:
 
     def authenticated_api_query(self, query_url=None):
         headers = {
-            "Authorization": "Bearer " + self.token,
             "Content-Type": "application/json;charset=utf-8",
         }
+        if self.token:
+            headers["Authorization"] = "Bearer " + self.token
         r = requests.get(query_url, headers=headers)
         obj = r.json()
         if r.ok:
