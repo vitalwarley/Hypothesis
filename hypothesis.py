@@ -6,7 +6,7 @@ import time
 import traceback
 
 try:
-    from urllib import urlencode
+    from urllib import urlencode  # type: ignore[attr-defined]
 except:
     from urllib.parse import urlencode
 
