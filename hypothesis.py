@@ -315,3 +315,16 @@ class HypothesisAnnotation:
         except:
             print(traceback.format_exc())
 
+    def __str__(self):
+        annotation = "Annotation(id={}, group={}, doc_title={}, type={}, highlight={}, note={}, position=({}, {}))"
+        return annotation.format(
+                self.id,
+                self.group,
+                self.doc_title,
+                self.type,
+                self.exact,
+                self.text,
+                self.start,
+                self.end
+                )
+
